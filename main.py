@@ -1,5 +1,6 @@
 import argparse
 import torch
+from preprocess.preprocess_text import handling_corpus
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -13,6 +14,10 @@ if args.data:
     print("> Processing Data...\n")
 
     # Preproccess
+    handling_corpus(
+        tgt_dir="Flickr8k.token.txt",
+        output_file_name="text"
+    )
 
     print("> Done!\n")
 
