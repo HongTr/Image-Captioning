@@ -42,7 +42,7 @@ def text_preprocessing(dict: dict, output_file_name: str = "token"):
             temp = [word for word in temp if len(word) > 1]
             # Remove token with numbers in them
             temp = [word for word in temp if word.isalpha()]
-            # Store as string
+            # Store as list of tokens
             descriptions[i] = temp
     # Save as .pt
     torch.save(dict, f'preprocess/preprocessed/{output_file_name}.pt')
