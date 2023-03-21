@@ -1,6 +1,5 @@
 import argparse
-import torch
-from preprocess.preprocess_text import handling_corpus
+from preprocess.preprocess import handling_token, text_preprocessing
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -13,11 +12,16 @@ args = parser.parse_args()
 if args.data:
     print("> Processing Data...\n")
 
-    # Preproccess
-    handling_corpus(
-        tgt_dir="Flickr8k.token.txt",
-        output_file_name="text"
+    # Create dictionary mapping from image_id to list of descriptions
+    image_id_to_descriptions = handling_token(
+        dir="Flickr8k.token.txt",
     )
+
+    # Preprocess image_id_to_descriptions's descriptions. Text Preprocessing
+    text_preprocessing(
+        dict=image_id_to_descriptions
+    )
+    # print(image_id_to_descriptions['1000268201_693b08cb0e']) DEBUG
 
     print("> Done!\n")
 
