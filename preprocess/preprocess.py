@@ -1,33 +1,29 @@
-import string
+from constants import *
+from hyperparameters import *
+import json
 import re
 
-def load_file(filename):
-    f = open(filename, "r")
-    text = f.read()
-    f.close()
-    return text
-
-#Create dictionary with id: [caption1, caption2, caption3, caption4, caption5]
-def load_description(text):
-    description_dict = dict()    
-    for line in text.split("\n"):
-        id, caption = line.split("\t")
-        id = id[:-6]    #Remove filename extension
-        if id not in description_dict:
-            description_dict[id] = []
-            description_dict[id].append(caption)
-        else:
-            description_dict[id].append(caption)
-    return description_dict
-
-def preprocessing(text):
-    text = text.translate(str.maketrans('', '', string.punctuation)) #remove punctuation
-    text = text.strip()
-    text = "startseq " + text + " endseq"   #add startseq and endseq to the head and tail of sentences
-    text = " ".join(text.split())
-    text = text.lower()
-    wordList = text.split()
-    wordList = [word for word in wordList if len(word)>1]  #remove "a" or "s"
-    wordList = [word for word in wordList if re.search(r"\d", word) is None ] #remove word contains number, for example: child123
-    text = " ".join(wordList)
-    return text
+def handling_corpus(tgt_dir: str, output_file_name: str) -> None:
+    picture_names = []
+    descriptions = []
+    ## Read dataset .txt to list of one-line code
+    tgt = open(DATA_DIR + tgt_dir, 'r').read().splitlines()
+    for line in tgt:
+        picture_name, description = line.split(".jpg#")
+        description = description[2:]
+        # print(picture_name, description)
+        picture_names.append(picture_name)
+        descriptions.append(description)
+    src_tgt = list(zip(picture_names, descriptions))
+    ## From lists of (source, target) to lists of jsons
+    raw_data = [
+        {
+            "pic": example[0],
+            "description": example[1]
+        } for example in src_tgt
+    ]
+    ## From lists of jsons to .json
+    with open(f'preprocess/preprocessed/{output_file_name}.json', 'w') as file:
+        for item in raw_data:
+            json.dump(item, file)
+            file.write('\n')
