@@ -1,6 +1,11 @@
 from constants import *
 from hyperparameters import *
 import string, torch
+import torch
+import torchvision.transforms as transforms
+from PIL import Image
+import os
+from multiprocessing import Pool
 
 def handling_token(dir: str) -> dict:
     # A map between image_id and list of descriptions
@@ -46,3 +51,28 @@ def text_preprocessing(dict: dict, output_file_name: str = "token"):
             descriptions[i] = temp
     # Save as .pt
     torch.save(dict, f'preprocess/preprocessed/{output_file_name}.pt')
+
+
+class image_processing:
+    def __init__(self, data_dir, transform):
+        self.data_dir = DATA_DIR
+        self.transform = transforms.Compose([
+                         transforms.Resize(256),
+                         transforms.CenterCrop(224),
+                         transforms.ToTensor(),
+                         transforms.Normalize(
+                                mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225]
+                            )
+                         ])
+    def process_image(self, image_path):
+        image = Image.open(image_path)
+        processed_image = self.transform(image)
+        return processed_image  
+    
+    def image_processing(self):
+        image_paths = [os.path.join(self.data_dir, file_name) for file_name in os.listdir(self.data_dir)]
+        with Pool() as pool:
+            processed_images = pool.map(process_image, image_paths)
+        image_tensor = torch.stack(processed_images, dim=0)
+        torch.save(image_tensor, os.path.join("preprocess/preprocessed", 'images.pt'))
