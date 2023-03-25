@@ -1,5 +1,5 @@
 import argparse
-from preprocess.preprocess import handling_token, text_preprocessing
+from preprocess.preprocess import handling_token, text_preprocessing, image_processing
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -22,6 +22,8 @@ if args.data:
         dict=image_id_to_descriptions
     )
     # print(image_id_to_descriptions['1000268201_693b08cb0e']) DEBUG
+    
+    image_processing()
 
     print("> Done!\n")
 
