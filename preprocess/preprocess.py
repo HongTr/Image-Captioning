@@ -1,6 +1,7 @@
 from constants import *
 from hyperparameters import *
 import string, torch
+from torchtext.vocab import GloVe
 
 def handling_token(dir: str) -> dict:
     # A map between image_id and list of descriptions
@@ -24,10 +25,13 @@ def handling_token(dir: str) -> dict:
     return mapping
 
 def text_preprocessing(dict: dict, output_file_name: str = "token"):
+    # GloVe vocab
+    vocab = GloVe("6B", 200)
     # Prepare translation table for removing punctuation
     table = str.maketrans('', '', string.punctuation)
     # For each key in dictionary
     for key, descriptions in dict.items():
+        print(key)
         # For each description in dictionary
         for i in range(len(descriptions)):
             # Create temp string
@@ -42,6 +46,10 @@ def text_preprocessing(dict: dict, output_file_name: str = "token"):
             temp = [word for word in temp if len(word) > 1]
             # Remove token with numbers in them
             temp = [word for word in temp if word.isalpha()]
+            # To Vector
+            temp = vocab.get_vecs_by_tokens(temp)
+            # To tensor
+            temp = torch.tensor(temp, dtype=torch.float32, device=DEVICE)
             # Store as list of tokens
             descriptions[i] = temp
     # Save as .pt

@@ -1,2 +1,4 @@
 preprocess/__pycache__
 __pycache__
+preprocess/preprocessed
+.vector_cache
