@@ -1,6 +1,9 @@
 from constants import *
 from hyperparameters import *
 import string, torch
+import torch
+from PIL import Image
+from multiprocessing import Pool
 from torchtext.vocab import GloVe
 
 def handling_token(dir: str) -> dict:
@@ -54,3 +57,36 @@ def text_preprocessing(dict: dict, output_file_name: str = "token"):
             descriptions[i] = temp
     # Save as .pt
     torch.save(dict, f'preprocess/preprocessed/{output_file_name}.pt')
+
+image_text = dict()  #dictionary image name and text
+tensor_image = dict() 
+
+def process_image(image_path):
+    image = Image.open(image_path)
+    processed_image = transform(image)
+    return processed_image  
+
+def image_to_text():
+    lines = open("data/Flickr8k.token.txt", 'r').read().splitlines()
+    global image_text
+    for line in lines:
+        line = line.split('\t')
+        image, text = line[0][:-6], line[1]
+        if image not in image_text:
+            image_text[image] = list()
+            image_text[image].append(text)
+        else:
+            image_text[image].append(text) 
+    torch.save(image_text, os.path.join("preprocess/preprocessed", 'image_text.pt'))
+
+def image_processing(data_dir = IMG_DIR):
+    image_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir)]
+
+    for index, image in enumerate(image_paths):
+        tensor_image[index] = image_paths[index][23:-4]
+
+    with Pool() as pool:
+        processed_images = pool.map(process_image,image_paths)
+    image_tensor = torch.stack(processed_images, dim=0)
+    torch.save(image_tensor, os.path.join("preprocess/preprocessed", 'images.pt'))
+    torch.save(tensor_image, os.path.join("preprocess/preprocessed", 'tensor_image.pt'))
