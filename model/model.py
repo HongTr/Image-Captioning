@@ -11,6 +11,6 @@ class Model(nn.Module):
 
         self.encoder = Encoder()
         self.decoder = Decoder()
-
+    
     def forward(self, input, target=None):
         pass
