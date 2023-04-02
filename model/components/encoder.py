@@ -19,5 +19,5 @@ class Encoder(nn.Module):
         )
     def forward(self, input, target=None):
         input = input.unsqueeze(0)
-        output = self.model(input)
-        return output
+        target = self.model(input)
+        return target
