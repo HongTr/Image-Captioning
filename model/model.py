@@ -10,7 +10,7 @@ class Model(nn.Module):
         super().__init__()
 
         self.encoder = Encoder(hidden_size)
-        self.decoder = Decoder()
+        self.decoder = Decoder(vocab_size)
 
     def forward(self, input, target=None):
         pass
