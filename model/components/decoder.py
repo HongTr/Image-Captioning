@@ -20,10 +20,19 @@ class Decoder(nn.Module):
             bidirectional=False
         )
 
+        self.dropout = nn.Dropout(p=DROPOUT_RATE)
+        self.linear = nn.Linear(
+            in_features=HIDDEN_SIZE,
+            out_features=vocab_size
+        )
+        self.log_softmax = nn.LogSoftmax(dim=2)
+
     def forward(self, input, decoder_hidden_state, cell_state):
-        embedding = self.embedding(input)
+        embedding = self.dropout(self.embedding(input))
 
         # LSTM
         decoder_hidden_states, (decoder_hidden_state, cell_state) = self.lstm(embedding, (decoder_hidden_state, cell_state))
 
-        return decoder_hidden_states, decoder_hidden_state, cell_state
+        output = self.log_softmax(self.linear(decoder_hidden_states))
+
+        return output, decoder_hidden_state, cell_state
