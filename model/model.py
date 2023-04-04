@@ -6,11 +6,11 @@ from components.encoder import Encoder
 from components.decoder import Decoder
 
 class Model(nn.Module):
-    def __init__(self, vocab_size, hidden_size):
+    def __init__(self, vocab_size):
         super().__init__()
         self.vocab_size = vocab_size
 
-        self.encoder = Encoder(hidden_size)
+        self.encoder = Encoder()
         self.decoder = Decoder(vocab_size)
 
     def forward(self, input, target=None):
@@ -24,7 +24,7 @@ class Model(nn.Module):
 
         embedding_vector = self.encoder(input)
 
-        decoder_input = torch.full((1, self.batch_size), BOS_IDX, device=DEVICE)
+        decoder_input = torch.full((1), 2, device=DEVICE)
         decoder_hidden = embedding_vector
         decoder_cell = torch.zeros(decoder_hidden.shape, device=DEVICE)
 

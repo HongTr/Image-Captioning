@@ -1,5 +1,8 @@
 import argparse
-from preprocess.preprocess import handling_token, text_preprocessing, image_processing, image_to_text
+from preprocess.preprocess import handling_token, text_preprocessing, image_processing
+from constants import *
+from model.model import Model
+from train.train import train
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -13,30 +16,49 @@ if args.data:
     print("> Processing Data...\n")
 
     # Create dictionary mapping from image_id to list of descriptions
-    image_id_to_descriptions = handling_token(
+    print("> Creating vocab...")
+    image_id_to_descriptions, vocab = handling_token(
         dir="Flickr8k.token.txt",
     )
 
+    print("> Vocab size: ", vocab.__len__())
+    torch.save(vocab, 'preprocess/preprocessed/vocab.pt')
+
     # Preprocess image_id_to_descriptions's descriptions. Text Preprocessing
+    print("> Text Preprocessing...")
     text_preprocessing(
-        dict=image_id_to_descriptions
+        dict=image_id_to_descriptions,
+        vocab=vocab
     )
     # print(image_id_to_descriptions['1000268201_693b08cb0e']) DEBUG
     
+    print("> Image Preprocessing...")
     image_processing()
-    image_to_text()
 
-    print("> Done!\n")
+    print("\n> Done!")
 
 if args.train:
     # Load dataset
     print("> Load dataset...\n")
 
+    train_set = open(DATA_DIR + dir, 'r').read().splitlines()
+    dev_set = open(DATA_DIR + dir, 'r').read().splitlines()
+    vocab = torch.load("preprocess/preprocessed/vocab.pt")
+    print("> Train examples: ", len(train_set))
+    print("> Dev examples: ", len(dev_set))
+    print("> Vocab size:", vocab.__len__())
+
+    # image_id_to_image
+    image_id_to_descriptions = torch.load('preprocess/preprocessed/token.pt')
+
     # Initialize model
     print("> Initialize model...\n")
+    model = Model(vocab.__len__())
+    print(model)
 
     # Start training
     print("> Training...\n")
+    train(model, train_set, dev_set, None, image_id_to_descriptions)
 
     print("> Done!\n")
 
