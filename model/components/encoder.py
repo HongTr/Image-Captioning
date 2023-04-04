@@ -6,7 +6,7 @@ from torchvision import models
 
 
 class Encoder(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self):
         super(Encoder, self).__init__()
         self.model = models.inception_v3(pretrained=True)
         self.model.aux_logits = False
@@ -15,7 +15,7 @@ class Encoder(nn.Module):
 
         self.model.fc = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(self.model.fc.in_features, hidden_size),
+            nn.Linear(self.model.fc.in_features, HIDDEN_SIZE),
         )
     def forward(self, input, target=None):
         input = input.unsqueeze(0)
