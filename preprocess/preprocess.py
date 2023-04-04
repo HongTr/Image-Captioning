@@ -4,11 +4,15 @@ import string, torch
 import torch
 from PIL import Image
 from multiprocessing import Pool
-from torchtext.vocab import GloVe
+from torchtext.data import get_tokenizer
+from torchtext.vocab import build_vocab_from_iterator
+import os
 
 def handling_token(dir: str) -> dict:
     # A map between image_id and list of descriptions
     mapping = dict()
+    # Description list
+    des_list = list()
     # Open file as list of lines
     lines = open(DATA_DIR + dir, 'r').read().splitlines()
     # For each line in lines
@@ -23,18 +27,36 @@ def handling_token(dir: str) -> dict:
             mapping[image_id] = list()
         # Append description to image_id's list of descriptions
         mapping[image_id].append(description)
+        # Add temp to des_list
+        des_list.append(description)
         # print(mapping[image_id]) DEBUG
-    # Return map
-    return mapping
 
-def text_preprocessing(dict: dict, output_file_name: str = "token"):
-    # GloVe vocab
-    vocab = GloVe("6B", 200)
+    # Tokenizer
+    tokenize = get_tokenizer("basic_english")
+
+    # Create Vocab. How to use build_vocab_from_iterator
+    def yield_tokens():
+        for line in des_list:
+            tokens = tokenize(line)
+            yield tokens
+
+    token_generator = yield_tokens()
+
+    vocab = build_vocab_from_iterator(
+            token_generator,
+            specials=['<pad>', '<unk>', '<sos>', '<eos>']
+        )
+    # Set '<unk>' token for Out-of-Vocab token
+    vocab.set_default_index(1)
+
+    # Return map
+    return mapping, vocab
+
+def text_preprocessing(dict: dict, vocab, output_file_name: str = "image_id_to_descriptions"):
     # Prepare translation table for removing punctuation
     table = str.maketrans('', '', string.punctuation)
     # For each key in dictionary
     for key, descriptions in dict.items():
-        print(key)
         # For each description in dictionary
         for i in range(len(descriptions)):
             # Create temp string
@@ -50,36 +72,22 @@ def text_preprocessing(dict: dict, output_file_name: str = "token"):
             # Remove token with numbers in them
             temp = [word for word in temp if word.isalpha()]
             # To Vector
-            temp = vocab.get_vecs_by_tokens(temp)
+            temp = vocab(temp)
             # To tensor
             temp = torch.tensor(temp, dtype=torch.float32, device=DEVICE)
             # Store as list of tokens
             descriptions[i] = temp
+
     # Save as .pt
     torch.save(dict, f'preprocess/preprocessed/{output_file_name}.pt')
-
-image_text = dict()  #dictionary image name and text
-tensor_image = dict() 
 
 def process_image(image_path):
     image = Image.open(image_path)
     processed_image = transform(image)
-    return processed_image  
-
-def image_to_text():
-    lines = open("data/Flickr8k.token.txt", 'r').read().splitlines()
-    global image_text
-    for line in lines:
-        line = line.split('\t')
-        image, text = line[0][:-6], line[1]
-        if image not in image_text:
-            image_text[image] = list()
-            image_text[image].append(text)
-        else:
-            image_text[image].append(text) 
-    torch.save(image_text, os.path.join("preprocess/preprocessed", 'image_text.pt'))
+    return processed_image
 
 def image_processing(data_dir = IMG_DIR):
+    tensor_image = dict() 
     image_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir)]
 
     for index, image in enumerate(image_paths):
