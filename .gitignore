@@ -3,3 +3,4 @@ __pycache__
 preprocess/preprocessed/images.pt
 preprocess/preprocessed
 .vector_cache
+temp.py

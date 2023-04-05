@@ -87,14 +87,18 @@ def process_image(image_path):
     return processed_image
 
 def image_processing(data_dir = IMG_DIR):
-    tensor_image = dict() 
     image_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir)]
 
-    for index, image in enumerate(image_paths):
-        tensor_image[index] = image_paths[index][23:-4]
+    # for index, image in enumerate(image_paths):
+    #     tensor_image[index] = image_paths[index][23:-4]
 
     with Pool() as pool:
         processed_images = pool.map(process_image,image_paths)
     image_tensor = torch.stack(processed_images, dim=0)
-    torch.save(image_tensor, os.path.join("preprocess/preprocessed", 'images.pt'))
-    torch.save(tensor_image, os.path.join("preprocess/preprocessed", 'tensor_image.pt'))
+
+    image_id_to_image = dict()
+    for index, image in enumerate(image_paths):
+        image_id_to_image[image_paths[index][23:-4]] = image_tensor[index]
+
+    # torch.save(image_tensor, os.path.join("preprocess/preprocessed", 'images.pt'))
+    torch.save(image_id_to_image, os.path.join("preprocess/preprocessed", 'image_id_to_image.pt'))

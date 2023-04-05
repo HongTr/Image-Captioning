@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 from hyperparameters import *
 from constants import *
-from components.encoder import Encoder
-from components.decoder import Decoder
+from model.components.encoder import Encoder
+from model.components.decoder import Decoder
 
 class Model(nn.Module):
     def __init__(self, vocab_size):
