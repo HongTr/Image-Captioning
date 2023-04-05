@@ -71,6 +71,9 @@ def text_preprocessing(dict: dict, vocab, output_file_name: str = "image_id_to_d
             temp = [word for word in temp if len(word) > 1]
             # Remove token with numbers in them
             temp = [word for word in temp if word.isalpha()]
+            # Add sos and eos tokens
+            temp = temp + ['<eos>']
+            temp = ['<sos>'] + temp
             # To Vector
             temp = vocab(temp)
             # To tensor
