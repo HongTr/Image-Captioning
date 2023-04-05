@@ -13,7 +13,7 @@ class Decoder(nn.Module):
         )
 
         self.lstm = nn.LSTM(
-            input_size=0,
+            input_size=EMBEDDING_SIZE,
             hidden_size=HIDDEN_SIZE,
             num_layers=LSTM_LAYERS,
             dropout=DROPOUT_RATE,
