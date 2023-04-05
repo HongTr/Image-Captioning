@@ -41,24 +41,24 @@ if args.train:
     # Load dataset
     print("> Load dataset...\n")
 
-    train_set = open(DATA_DIR + dir, 'r').read().splitlines()
-    dev_set = open(DATA_DIR + dir, 'r').read().splitlines()
+    train_set = open(DATA_DIR + "Flickr_8k.trainImages.txt", 'r').read().splitlines()
+    dev_set = open(DATA_DIR + "Flickr_8k.devImages.txt", 'r').read().splitlines()
     vocab = torch.load("preprocess/preprocessed/vocab.pt")
     print("> Train examples: ", len(train_set))
     print("> Dev examples: ", len(dev_set))
     print("> Vocab size:", vocab.__len__())
 
-    # image_id_to_image
-    image_id_to_descriptions = torch.load('preprocess/preprocessed/token.pt')
+    print("> Load mapping...")
+    image_id_to_image = torch.load('preprocess/preprocessed/image_id_to_image.pt')
+    image_id_to_descriptions = torch.load('preprocess/preprocessed/image_id_to_descriptions.pt')
 
     # Initialize model
     print("> Initialize model...\n")
     model = Model(vocab.__len__())
-    print(model)
 
     # Start training
     print("> Training...\n")
-    train(model, train_set, dev_set, None, image_id_to_descriptions)
+    train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions)
 
     print("> Done!\n")
 
