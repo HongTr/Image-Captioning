@@ -17,7 +17,9 @@ class Encoder(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(self.model.fc.in_features, HIDDEN_SIZE),
         )
+        self.interpolate = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False)
     def forward(self, input, target=None):
         input = input.unsqueeze(0)
+        input = self.interpolate(input)
         target = self.model(input)
         return target
