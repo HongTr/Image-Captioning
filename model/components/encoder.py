@@ -3,12 +3,12 @@ import torch.nn as nn
 from hyperparameters import *
 from constants import *
 from torchvision import models
-
+from torchvision.models import Inception_V3_Weights
 
 class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
-        self.model = models.inception_v3(pretrained=True)
+        self.model = models.inception_v3(weights=Inception_V3_Weights.DEFAULT)
         self.model.aux_logits = False
         for param in self.model.parameters():
             param.requires_grad = False
