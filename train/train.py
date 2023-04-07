@@ -4,6 +4,7 @@ import torch.optim as optim
 from constants import *
 from hyperparameters import *
 from timeit import default_timer as timer
+from tqdm import tqdm
 
 def train_per_iter(train_set: list, 
         image_id_to_image: dict, 
