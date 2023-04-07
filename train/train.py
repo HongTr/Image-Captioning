@@ -16,9 +16,9 @@ def train_per_iter(train_set: list,
     final_loss = 0
     current_loss = 0
 
-    for image_id in train_set:
+    for image_id in tqdm(train_set):
         # Extract tensor from dict
-        image_tensor = image_id_to_image[image_id]
+        image_tensor = image_id_to_image[image_id].to(DEVICE)
         description_tensors = image_id_to_description[image_id]
 
         for tensor in description_tensors:

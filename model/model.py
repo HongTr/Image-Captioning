@@ -24,7 +24,7 @@ class Model(nn.Module):
 
         embedding_vector = self.encoder(input)
 
-        decoder_input = torch.full((1), 2, device=DEVICE)
+        decoder_input = torch.tensor(2, dtype=torch.long, device=DEVICE).unsqueeze(0)
         decoder_hidden = embedding_vector
         decoder_cell = torch.zeros(decoder_hidden.shape, device=DEVICE)
 
@@ -33,7 +33,7 @@ class Model(nn.Module):
             ## Forward through Decoder
             output, decoder_hidden, decoder_cell = self.decoder(decoder_input, decoder_hidden, decoder_cell)
             ## Get next input
-            decoder_input = output.argmax(2)
+            decoder_input = output.argmax(1)
             ## Save output for compute loss
             outputs[i] = output.squeeze()
 

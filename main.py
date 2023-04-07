@@ -54,7 +54,7 @@ if args.train:
 
     # Initialize model
     print("> Initialize model...\n")
-    model = Model(vocab.__len__())
+    model = Model(vocab.__len__()).to(DEVICE)
 
     # Start training
     print("> Training...\n")

@@ -73,11 +73,11 @@ def text_preprocessing(dict: dict, vocab, output_file_name: str = "image_id_to_d
             temp = [word for word in temp if word.isalpha()]
             # Add sos and eos tokens
             temp = temp + ['<eos>']
-            temp = ['<sos>'] + temp
+            temp = ['<sos>'] + temp 
             # To Vector
             temp = vocab(temp)
             # To tensor
-            temp = torch.tensor(temp, dtype=torch.float32, device=DEVICE)
+            temp = torch.tensor(temp, dtype=torch.long, device=DEVICE)
             # Store as list of tokens
             descriptions[i] = temp
 

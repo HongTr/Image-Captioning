@@ -25,7 +25,7 @@ class Decoder(nn.Module):
             in_features=HIDDEN_SIZE,
             out_features=vocab_size
         )
-        self.log_softmax = nn.LogSoftmax(dim=2)
+        self.log_softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, input, decoder_hidden_state, cell_state):
         embedding = self.dropout(self.embedding(input))
