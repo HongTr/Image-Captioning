@@ -58,7 +58,7 @@ if args.train:
 
     # Start training
     print("> Training...\n")
-    train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions)
+    train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions, vocab)
 
     print("> Done!\n")
 
