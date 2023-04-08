@@ -3,6 +3,7 @@ from preprocess.preprocess import handling_token, text_preprocessing, image_proc
 from constants import *
 from model.model import Model
 from train.train import train
+from utils.utils import plot_bleu, plot_loss
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -59,6 +60,10 @@ if args.train:
     # Start training
     print("> Training...\n")
     train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions, vocab)
+
+    plot_loss(model)
+
+    plot_bleu(model)
 
     print("> Done!\n")
 
