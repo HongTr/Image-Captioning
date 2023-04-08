@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 from constants import *
 from hyperparameters import *
-from timeit import default_timer as timer
 from tqdm import tqdm
 from utils.utils import model_bleu_score
 
@@ -49,7 +48,6 @@ def dev_per_iter(dev_set: list,
         image_id_to_image: dict, 
         image_id_to_description: dict,
         model: nn.Module, 
-        optimizer: optim.Optimizer, 
         criterion: nn.NLLLoss
     ):
     # Initialize some variables
@@ -94,9 +92,6 @@ def train(model: nn.Module,
 
     # Training
     for epoch in range(EPOCHS):
-        # Start timer
-        start_time = timer()
-
         # Print epoch/EPOCHS:
         print(f"Epoch: {epoch+1}/{EPOCHS}:")
 
@@ -110,7 +105,7 @@ def train(model: nn.Module,
         model.train(False)
 
         # Calculate Loss on dev set
-        dev_average_loss = dev_per_iter(dev_set, image_id_to_image, image_id_to_description, model, optimizer, criterion)
+        dev_average_loss = dev_per_iter(dev_set, image_id_to_image, image_id_to_description, model, criterion)
 
         # Calculate bleu on train set
         train_bleu = model_bleu_score(train_set, image_id_to_image, image_id_to_description, model, vocab)
@@ -122,16 +117,11 @@ def train(model: nn.Module,
         plot_train_bleu.append(train_bleu)
         plot_dev_bleu.append(dev_bleu)
 
-        # End timer
-        end_time = timer()
-
         # Print information
         if epoch % PRINT_EVERY == 0:
             print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
-            print(f"- Bleu       | Train: {train_bleu:.4f} - Dev: {dev_bleu:.4f}")
-            print(f"- Epoch's time: {(end_time - start_time):.3f}s")
+            print(f"- Bleu       | Dev: {dev_bleu:.4f}")
 
     torch.save(plot_train_loss, f'graphs/data/{model.name}_train_loss')
     torch.save(plot_dev_loss, f'graphs/data/{model.name}_dev_loss')
-    torch.save(plot_train_bleu, f'graphs/data/{model.name}_train_bleu')
     torch.save(plot_dev_bleu, f'graphs/data/{model.name}_dev_bleu')

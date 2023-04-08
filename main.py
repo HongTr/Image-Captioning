@@ -61,8 +61,8 @@ if args.train:
     print("> Training...")
     train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions, vocab)
 
-    plot_loss(model)
-    plot_bleu(model)
+    plot_loss()
+    plot_bleu()
 
     print("> Done!\n")
 
