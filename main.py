@@ -54,15 +54,14 @@ if args.train:
     image_id_to_descriptions = torch.load('preprocess/preprocessed/image_id_to_descriptions.pt')
 
     # Initialize model
-    print("> Initialize model...\n")
+    print("> Initialize model...")
     model = Model(vocab.__len__()).to(DEVICE)
 
     # Start training
-    print("> Training...\n")
+    print("> Training...")
     train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions, vocab)
 
     plot_loss(model)
-
     plot_bleu(model)
 
     print("> Done!\n")
