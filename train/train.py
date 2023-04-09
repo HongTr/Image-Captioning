@@ -83,7 +83,6 @@ def train(model: nn.Module,
     # Initialize some variables
     plot_train_loss = []
     plot_dev_loss = []
-    plot_train_bleu = []
     plot_dev_bleu = []
 
     # Loss & Optimizer
@@ -120,6 +119,6 @@ def train(model: nn.Module,
             print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
             print(f"- Bleu       | Dev: {dev_bleu:.4f}")
 
-    torch.save(plot_train_loss, f'graphs/data/{model.name}_train_loss')
-    torch.save(plot_dev_loss, f'graphs/data/{model.name}_dev_loss')
-    torch.save(plot_dev_bleu, f'graphs/data/{model.name}_dev_bleu')
+    torch.save(plot_train_loss, f'graphs/data/train_loss')
+    torch.save(plot_dev_loss, f'graphs/data/dev_loss')
+    torch.save(plot_dev_bleu, f'graphs/data/dev_bleu')
