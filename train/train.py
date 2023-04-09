@@ -121,7 +121,7 @@ def train(model: nn.Module,
         if epoch % PRINT_EVERY == 0:
             if os.path.isdir(f'model/snapshot/{time_stamp}') is False:
                 os.makedirs(f'model/snapshot/{time_stamp}')
-            torch.save(model.state_dict(), f'model/snapshot/{time_stamp}/snap_shot_{epoch}')
+            torch.save(model.state_dict(), f'model/snapshot/{time_stamp}/snap_shot_{epoch}.pt')
             print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
             print(f"- Bleu       | Dev: {dev_bleu:.4f}")
 
