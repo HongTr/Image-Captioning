@@ -7,6 +7,7 @@ from constants import *
 from torchtext.vocab import Vocab
 from nltk.translate.bleu_score import sentence_bleu
 from tqdm import tqdm
+import os
 
 def model_bleu_score(dataset, image_id_to_image: dict, image_id_to_description: dict, model, vocab: Vocab):
     bleu_per_epoch = 0
@@ -58,6 +59,8 @@ def plot_loss():
     plt.ylabel('Average loss')
     plt.legend()
     plt.xticks(np.arange(1, len(plot_train_loss)+1, 5))
+    if os.path.isdir('graphs/graphs/') is False:
+        os.makedirs('graphs/graphs/')
     plt.savefig(f"graphs/graphs/loss_{time_stamp}.png")
     plt.figure().clear()
 
@@ -77,5 +80,7 @@ def plot_bleu():
     plt.ylabel('Bleu Score')
     plt.legend()
     plt.xticks(np.arange(1, len(plot_dev_bleu)+1, 5))
+    if os.path.isdir('graphs/graphs/') is False:
+        os.makedirs('graphs/graphs/')
     plt.savefig(f"graphs/graphs/bleu_{time_stamp}.png")
     plt.figure().clear()
