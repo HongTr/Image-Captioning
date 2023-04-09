@@ -4,6 +4,7 @@ from constants import *
 from model.model import Model
 from train.train import train
 from utils.utils import plot_bleu, plot_loss
+import os
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -23,6 +24,8 @@ if args.data:
     )
 
     print("> Vocab size: ", vocab.__len__())
+    if os.path.isdir('preprocess/preprocessed/') is False:
+        os.makedirs('preprocess/preprocessed/')
     torch.save(vocab, 'preprocess/preprocessed/vocab.pt')
 
     # Preprocess image_id_to_descriptions's descriptions. Text Preprocessing
