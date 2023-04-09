@@ -5,6 +5,8 @@ from constants import *
 from hyperparameters import *
 from tqdm import tqdm
 from utils.utils import model_bleu_score
+import os
+from datetime import datetime
 
 def train_per_iter(train_set: list, 
         image_id_to_image: dict, 
@@ -84,6 +86,7 @@ def train(model: nn.Module,
     plot_train_loss = []
     plot_dev_loss = []
     plot_dev_bleu = []
+    time_stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
     # Loss & Optimizer
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -116,6 +119,9 @@ def train(model: nn.Module,
 
         # Print information
         if epoch % PRINT_EVERY == 0:
+            if os.path.isdir(f'model/snapshot/{time_stamp}') is False:
+                os.makedirs(f'model/snapshot/{time_stamp}')
+            torch.save(model.state_dict(), f'model/snapshot/{time_stamp}/snap_shot_{epoch}')
             print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
             print(f"- Bleu       | Dev: {dev_bleu:.4f}")
 
