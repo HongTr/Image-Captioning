@@ -107,14 +107,12 @@ def train(model: nn.Module,
         # Calculate Loss on dev set
         dev_average_loss = dev_per_iter(dev_set, image_id_to_image, image_id_to_description, model, criterion)
 
-        # Calculate bleu on train set
-        train_bleu = model_bleu_score(train_set, image_id_to_image, image_id_to_description, model, vocab)
+        # Calculate bleu on dev set
         dev_bleu = model_bleu_score(dev_set, image_id_to_image, image_id_to_description, model, vocab)
 
         # Save loss, bleu
         plot_train_loss.append(train_average_loss)
         plot_dev_loss.append(dev_average_loss)
-        plot_train_bleu.append(train_bleu)
         plot_dev_bleu.append(dev_bleu)
 
         # Print information
