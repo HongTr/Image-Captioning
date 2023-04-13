@@ -43,6 +43,8 @@ def train_per_iter(train_set: list,
             # Update parameters
             optimizer.step()
 
+        break
+
     final_loss = current_loss / len(train_set)
     return final_loss
 
@@ -71,6 +73,8 @@ def dev_per_iter(dev_set: list,
 
             # Update loss
             current_loss += loss.item()
+
+            break
 
     final_loss = current_loss / len(dev_set)
     return final_loss
@@ -124,6 +128,8 @@ def train(model: nn.Module,
             torch.save(model.state_dict(), f'model/snapshot/{time_stamp}/snap_shot_{epoch}.pt')
             print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
             print(f"- Bleu       | Dev: {dev_bleu:.4f}")
+        
+        break
 
     torch.save(plot_train_loss, f'graphs/data/train_loss')
     torch.save(plot_dev_loss, f'graphs/data/dev_loss')

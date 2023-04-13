@@ -4,3 +4,5 @@ preprocess/preprocessed/images.pt
 preprocess/preprocessed
 .vector_cache
 temp.py
+graphs
+model/snapshot

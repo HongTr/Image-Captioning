@@ -27,7 +27,7 @@ def model_bleu_score(dataset, image_id_to_image: dict, image_id_to_description: 
             # From Tensors to Sentences -> Calculate Bleu on sentence
             for j in range(BATCH_SIZE):
                 translated_output = vocab.lookup_tokens(output.cpu().numpy())
-                translated_target = vocab.lookup_tokens(tensor.cpu().numpy())
+                translated_target = [vocab.lookup_tokens(tensor.cpu().numpy())]
                 bleu_per_tensor = sentence_bleu(translated_target, translated_output, weights=(1.0, 0, 0, 0))
                 bleu_per_batch += bleu_per_tensor
 
