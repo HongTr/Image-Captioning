@@ -4,7 +4,7 @@ import torch.optim as optim
 from constants import *
 from hyperparameters import *
 from tqdm import tqdm
-from utils.utils import model_bleu_score
+from utils.utils import model_bleu_score, EarlyStopping
 import os
 from datetime import datetime
 
@@ -92,6 +92,9 @@ def train(model: nn.Module,
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     criterion = nn.NLLLoss()
 
+    # Early Stopping
+    early_stop = EarlyStopping(patience=3, verbose=True)
+
     # Training
     for epoch in range(EPOCHS):
         # Print epoch/EPOCHS:
@@ -124,6 +127,11 @@ def train(model: nn.Module,
             torch.save(model.state_dict(), f'model/snapshot/{time_stamp}/snap_shot_{epoch}.pt')
             print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
             print(f"- Bleu       | Dev: {dev_bleu:.4f}")
+        
+        # Check if validation loss is decreasing
+        if early_stop(dev_average_loss):
+            print('Early stopping at epoch', epoch)
+            break
 
     torch.save(plot_train_loss, f'graphs/data/train_loss')
     torch.save(plot_dev_loss, f'graphs/data/dev_loss')
