@@ -1,5 +1,5 @@
 import argparse
-from preprocess.preprocess import handling_token, text_preprocessing, image_processing
+from preprocess.preprocess import handling_token, text_preprocessing, image_processing, create_dataloader
 from constants import *
 from model.model import Model
 from train.train import train
@@ -46,7 +46,6 @@ if args.train:
     print("> Load dataset...\n")
 
     train_set = open(DATA_DIR + "Flickr_8k.trainImages.txt", 'r').read().splitlines()
-    dev_set = open(DATA_DIR + "Flickr_8k.devImages.txt", 'r').read().splitlines()
     vocab = torch.load("preprocess/preprocessed/vocab.pt")
     print("> Train examples: ", len(train_set))
     print("> Dev examples: ", len(dev_set))
@@ -56,16 +55,18 @@ if args.train:
     image_id_to_image = torch.load('preprocess/preprocessed/image_id_to_image.pt')
     image_id_to_descriptions = torch.load('preprocess/preprocessed/image_id_to_descriptions.pt')
 
+    print("> Initialize DataLoader...")
+    train_set = create_dataloader(train_set, image_id_to_image, image_id_to_descriptions)
+
     # Initialize model
     print("> Initialize model...")
     model = Model(vocab.__len__()).to(DEVICE)
 
     # Start training
     print("> Training...")
-    train(model, train_set, dev_set, image_id_to_image, image_id_to_descriptions, vocab)
+    train(model, train_set)
 
     plot_loss()
-    plot_bleu()
 
     print("> Done!\n")
 
