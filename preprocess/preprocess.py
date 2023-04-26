@@ -8,7 +8,7 @@ from torchtext.data import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 import os
 from torch.utils.data import DataLoader
-from custom_dataset import CustomDataset
+from preprocess.custom_dataset import CustomDataset
 
 def handling_token(dir: str) -> dict:
     # A map between image_id and list of descriptions
