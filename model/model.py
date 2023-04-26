@@ -19,14 +19,17 @@ class Model(nn.Module):
             target_sequence_length = MAX_TGT_SEQ_LENGTH
         else:
             target_sequence_length = target.shape[1]
+        
+        # Get Batch_size
+        batch_size = input.shape[0]
 
-        outputs = torch.zeros((target_sequence_length, BATCH_SIZE, self.vocab_size), device=DEVICE)
+        outputs = torch.zeros((target_sequence_length, batch_size, self.vocab_size), device=DEVICE)
 
         # Encoder
         embedding_vector = self.encoder(input)
 
         # Bridge
-        decoder_input = torch.full((BATCH_SIZE, 1), 2, device=DEVICE)
+        decoder_input = torch.full((batch_size, 1), 2, device=DEVICE)
         decoder_hidden = embedding_vector.unsqueeze(0)
         decoder_cell = torch.zeros(decoder_hidden.shape, device=DEVICE)
 
