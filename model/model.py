@@ -27,7 +27,7 @@ class Model(nn.Module):
 
         # Bridge
         decoder_input = torch.full((BATCH_SIZE, 1), 2, device=DEVICE)
-        decoder_hidden = embedding_vector
+        decoder_hidden = embedding_vector.unsqueeze(0)
         decoder_cell = torch.zeros(decoder_hidden.shape, device=DEVICE)
 
         # Decoder
