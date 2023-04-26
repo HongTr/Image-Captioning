@@ -15,7 +15,7 @@ def evaluate(model: nn.Module, val_set: DataLoader, vocab: Vocab):
     bleu_per_epoch = 0
 
     # Make sure gradient tracking is on, and do a pass over the data
-    model.eval(True)
+    model.eval()
 
     for data in tqdm(val_set):
         # Extract tensor from dict

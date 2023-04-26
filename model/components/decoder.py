@@ -16,7 +16,6 @@ class Decoder(nn.Module):
             input_size=EMBEDDING_SIZE,
             hidden_size=HIDDEN_SIZE,
             num_layers=LSTM_LAYERS,
-            dropout=DROPOUT_RATE,
             bidirectional=False,
             batch_first=True
         )
