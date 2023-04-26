@@ -75,7 +75,9 @@ def text_preprocessing(dict: dict, vocab, output_file_name: str = "image_id_to_d
             temp = [word for word in temp if word.isalpha()]
             # Add sos and eos tokens
             temp = temp + ['<eos>']
-            temp = ['<sos>'] + temp 
+            temp = ['<sos>'] + temp
+            # Padding
+            temp = temp + ['<pad>'] * (MAX_TGT_SEQ_LENGTH - len(temp))
             # To Vector
             temp = vocab(temp)
             # To tensor
