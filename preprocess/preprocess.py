@@ -113,6 +113,6 @@ def create_dataloader(dataset: list, images_dict: dict, descriptions_dict: dict)
     dataset = CustomDataset(images_dict, descriptions_dict)
 
     # Create dataloader
-    dataloader = DataLoader(dataset, batch_size=32)
-    
+    dataloader = DataLoader(dataset, batch_size=BATCH_SIZE)
+
     return dataloader
