@@ -48,7 +48,6 @@ if args.train:
     train_set = open(DATA_DIR + "Flickr_8k.trainImages.txt", 'r').read().splitlines()
     vocab = torch.load("preprocess/preprocessed/vocab.pt")
     print("> Train examples: ", len(train_set))
-    print("> Dev examples: ", len(dev_set))
     print("> Vocab size:", vocab.__len__())
 
     print("> Load mapping...")
