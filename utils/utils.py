@@ -4,9 +4,6 @@ import numpy as np
 import torch
 from hyperparameters import *
 from constants import *
-from torchtext.vocab import Vocab
-from nltk.translate.bleu_score import sentence_bleu
-from tqdm import tqdm
 import os
 
 class EarlyStopping:
@@ -30,33 +27,6 @@ class EarlyStopping:
             self.best_score = val_loss
             self.counter = 0
         return self.early_stop
-
-def model_bleu_score(dataset, image_id_to_image: dict, image_id_to_description: dict, model, vocab: Vocab):
-    bleu_per_epoch = 0
-
-    for image_id in tqdm(dataset):
-        # Extract tensor from dict
-        image_tensor = image_id_to_image[image_id].to(DEVICE)
-        description_tensors = image_id_to_description[image_id]\
-
-        for tensor in description_tensors:
-            bleu_per_batch = 0
-
-            # Forward
-            output = model(image_tensor, tensor)
-            output = torch.argmax(output, dim=1)
-
-            # From Tensors to Sentences -> Calculate Bleu on sentence
-            for j in range(BATCH_SIZE):
-                translated_output = vocab.lookup_tokens(output.cpu().numpy())
-                translated_target = [vocab.lookup_tokens(tensor.cpu().numpy())]
-                bleu_per_tensor = sentence_bleu(translated_target, translated_output, weights=(1.0, 0, 0, 0))
-                bleu_per_batch += bleu_per_tensor
-
-            bleu_per_batch = bleu_per_batch / BATCH_SIZE
-            bleu_per_epoch += bleu_per_batch
-
-    return bleu_per_epoch / len(dataset)
 
 def plot_loss():
     plot_train_loss = torch.load(f'graphs/data/train_loss')

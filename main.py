@@ -5,6 +5,7 @@ from model.model import Model
 from train.train import train
 from utils.utils import plot_loss
 import os
+from evaluation.evaluate import evaluate
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -43,7 +44,7 @@ if args.data:
 
 if args.train:
     # Load dataset
-    print("> Load dataset...\n")
+    print("> Load dataset...")
 
     train_set = open(DATA_DIR + "Flickr_8k.trainImages.txt", 'r').read().splitlines()
     vocab = torch.load("preprocess/preprocessed/vocab.pt")
@@ -70,12 +71,26 @@ if args.train:
     print("> Done!\n")
 
 if args.evaluate:
-    print("> Evaluating...\n")
+    print("> Evaluating...")
 
-    print("> Load dataset...\n")
+    print("> Load dataset...")
+    val_set = open(DATA_DIR + "Flickr_8k.devImages.txt", 'r').read().splitlines()
+    vocab = torch.load("preprocess/preprocessed/vocab.pt")
+    print("> Val examples: ", len(val_set))
+    print("> Vocab size:", vocab.__len__())
+    
+    print("> Load mapping...")
+    image_id_to_image = torch.load('preprocess/preprocessed/image_id_to_image.pt')
+    image_id_to_descriptions = torch.load('preprocess/preprocessed/image_id_to_descriptions.pt')
 
-    print("> Initialize model...\n")
+    print("> Initialize DataLoader...")
+    val_set = create_dataloader(val_set, image_id_to_image, image_id_to_descriptions)
 
-    print("> Load pre-trained model...\n")
-        
-    # Result
+    print("> Initialize model...")
+    model = Model(vocab.__len__()).to(DEVICE)
+
+    print("> Load pre-trained model...")
+    state_dict = torch.load("model/snapshot/20230426_150221/snap_shot_2.pt", map_location=torch.device(DEVICE))
+    model.load_state_dict(state_dict)
+
+    evaluate(model, val_set, vocab)
