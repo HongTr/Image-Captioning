@@ -17,7 +17,8 @@ class Decoder(nn.Module):
             hidden_size=HIDDEN_SIZE,
             num_layers=LSTM_LAYERS,
             dropout=DROPOUT_RATE,
-            bidirectional=False
+            bidirectional=False,
+            batch_first=True
         )
 
         self.dropout = nn.Dropout(p=DROPOUT_RATE)

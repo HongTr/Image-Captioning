@@ -20,20 +20,23 @@ class Model(nn.Module):
         else:
             target_sequence_length = target.shape[0]
 
-        outputs = torch.zeros((target_sequence_length, self.vocab_size), device=DEVICE)
+        outputs = torch.zeros((target_sequence_length, BATCH_SIZE, self.vocab_size), device=DEVICE)
 
+        # Encoder
         embedding_vector = self.encoder(input)
 
-        decoder_input = torch.tensor(2, dtype=torch.long, device=DEVICE).unsqueeze(0)
+        # Bridge
+        decoder_input = torch.full((BATCH_SIZE, 1), 2, device=DEVICE)
         decoder_hidden = embedding_vector
         decoder_cell = torch.zeros(decoder_hidden.shape, device=DEVICE)
 
+        # Decoder
         ## Loop through target
         for i in range(target_sequence_length):
             ## Forward through Decoder
             output, decoder_hidden, decoder_cell = self.decoder(decoder_input, decoder_hidden, decoder_cell)
             ## Get next input
-            decoder_input = output.argmax(1)
+            decoder_input = output.argmax(2)
             ## Save output for compute loss
             outputs[i] = output.squeeze()
 
