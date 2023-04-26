@@ -30,6 +30,8 @@ def train_per_iter(train_set: DataLoader,
         output = model(image_tensor, description_tensor)
 
         # Compute loss
+        print(output.size(), description_tensor.size())
+        print(output.view(-1, output.shape[2]).size(), description_tensor.view(description_tensor.shape[0] * description_tensor.shape[1]).size())
         loss = criterion(output.view(-1, output.shape[2]), description_tensor.view(description_tensor.shape[0] * description_tensor.shape[1]))
 
         # Update loss

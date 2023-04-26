@@ -18,7 +18,7 @@ class Model(nn.Module):
         if target == None:
             target_sequence_length = MAX_TGT_SEQ_LENGTH
         else:
-            target_sequence_length = target.shape[0]
+            target_sequence_length = target.shape[1]
 
         outputs = torch.zeros((target_sequence_length, BATCH_SIZE, self.vocab_size), device=DEVICE)
 
