@@ -26,11 +26,11 @@ def evaluate(model: nn.Module, val_set: DataLoader, vocab: Vocab):
 
         # Forward
         output = model(image_tensor, description_tensor)
-        output = torch.argmax(output, dim=1)
+        output = torch.argmax(output, dim=0)
 
-        for j in range(BATCH_SIZE):
-            translated_output = vocab.lookup_tokens(output.cpu().numpy())
-            translated_target = [vocab.lookup_tokens(description_tensor.cpu().numpy())]
+        for j in range(output.shape[0]):
+            translated_output = vocab.lookup_tokens(output[j].cpu().numpy())
+            translated_target = [vocab.lookup_tokens(description_tensor[j].cpu().numpy())]
             bleu_per_tensor = sentence_bleu(translated_target, translated_output, weights=(1.0, 0, 0, 0))
             bleu_per_batch += bleu_per_tensor
 

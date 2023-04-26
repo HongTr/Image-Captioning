@@ -1,9 +1,9 @@
 import argparse
 from preprocess.preprocess import handling_token, text_preprocessing, image_processing, create_dataloader
 from constants import *
+from hyperparameters import *
 from model.model import Model
 from train.train import train
-from utils.utils import plot_loss
 import os
 from evaluation.evaluate import evaluate
 
@@ -66,8 +66,6 @@ if args.train:
     print("> Training...")
     train(model, train_set)
 
-    plot_loss()
-
     print("> Done!\n")
 
 if args.evaluate:
@@ -90,7 +88,7 @@ if args.evaluate:
     model = Model(vocab.__len__()).to(DEVICE)
 
     print("> Load pre-trained model...")
-    state_dict = torch.load("model/snapshot/20230426_150221/snap_shot_2.pt", map_location=torch.device(DEVICE))
+    state_dict = torch.load("model/snapshot/20230426_154316/snap_shot_4.pt", map_location=torch.device(DEVICE))
     model.load_state_dict(state_dict)
 
     evaluate(model, val_set, vocab)
