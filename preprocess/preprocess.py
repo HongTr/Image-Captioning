@@ -76,8 +76,11 @@ def text_preprocessing(dict: dict, vocab, output_file_name: str = "image_id_to_d
             # Add sos and eos tokens
             temp = temp + ['<eos>']
             temp = ['<sos>'] + temp
-            # Padding
-            temp = temp + ['<pad>'] * (MAX_TGT_SEQ_LENGTH - len(temp))
+            # Truncating & Padding
+            if len(temp) > MAX_TGT_SEQ_LENGTH:
+                temp = temp[:MAX_TGT_SEQ_LENGTH]
+            else:
+                temp = temp + ['<pad>'] * (MAX_TGT_SEQ_LENGTH - len(temp))
             # To Vector
             temp = vocab(temp)
             # To tensor
