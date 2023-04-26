@@ -1,7 +1,6 @@
-import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
-class ImageDescriptionDataset(Dataset):
+class CustomDataset(Dataset):
     def __init__(self, images_dict, descriptions_dict):
         self.image_ids = list(images_dict.keys())
         self.images = list(images_dict.values())

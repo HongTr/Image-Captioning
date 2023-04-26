@@ -7,6 +7,8 @@ from multiprocessing import Pool
 from torchtext.data import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 import os
+from torch.utils.data import DataLoader
+from custom_dataset import CustomDataset
 
 def handling_token(dir: str) -> dict:
     # A map between image_id and list of descriptions
@@ -105,3 +107,12 @@ def image_processing(data_dir = IMG_DIR):
 
     # torch.save(image_tensor, os.path.join("preprocess/preprocessed", 'images.pt'))
     torch.save(image_id_to_image, os.path.join("preprocess/preprocessed", 'image_id_to_image.pt'))
+
+def create_dataloader(dataset: list, images_dict: dict, descriptions_dict: dict):
+    # Create custom dataset
+    dataset = CustomDataset(images_dict, descriptions_dict)
+
+    # Create dataloader
+    dataloader = DataLoader(dataset, batch_size=32)
+    
+    return dataloader
