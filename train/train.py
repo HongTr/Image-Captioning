@@ -7,10 +7,9 @@ from tqdm import tqdm
 from utils.utils import model_bleu_score, EarlyStopping
 import os
 from datetime import datetime
+from torch.utils.data import DataLoader
 
-def train_per_iter(train_set: list, 
-        image_id_to_image: dict, 
-        image_id_to_description: dict,
+def train_per_iter(train_set: DataLoader, 
         model: nn.Module, 
         optimizer: optim.Optimizer, 
         criterion: nn.NLLLoss
@@ -19,81 +18,40 @@ def train_per_iter(train_set: list,
     final_loss = 0
     current_loss = 0
 
-    for image_id in tqdm(train_set):
+    for data in tqdm(train_set):
         # Extract tensor from dict
-        image_tensor = image_id_to_image[image_id].to(DEVICE)
-        description_tensors = image_id_to_description[image_id]
+        image_tensor = data["image"].to(DEVICE)
+        description_tensor = data["description"]
 
-        for tensor in description_tensors:
-            # Clear cache
-            optimizer.zero_grad()
-            
-            # Foward
-            output = model(image_tensor, tensor)
+        # Clear cache
+        optimizer.zero_grad()
+        
+        # Foward
+        output = model(image_tensor, description_tensor)
 
-            # Compute loss
-            loss = criterion(output, tensor)
+        # Compute loss
+        loss = criterion(output.view(-1, output.shape[2]), description_tensor.view(description_tensor.shape[0] * description_tensor.shape[1]))
 
-            # Update loss
-            current_loss += loss.item()
+        # Update loss
+        current_loss += loss.item()
 
-            # Backward
-            loss.backward()
+        # Backward
+        loss.backward()
 
-            # Update parameters
-            optimizer.step()
+        # Update parameters
+        optimizer.step()
 
     final_loss = current_loss / len(train_set)
     return final_loss
 
-def dev_per_iter(dev_set: list, 
-        image_id_to_image: dict, 
-        image_id_to_description: dict,
-        model: nn.Module, 
-        criterion: nn.NLLLoss
-    ):
-    # Initialize some variables
-    final_loss = 0
-    current_loss = 0
-
-    for image_id in tqdm(dev_set):
-        # Extract tensor from dict
-        image_tensor = image_id_to_image[image_id].to(DEVICE)
-        description_tensors = image_id_to_description[image_id]
-
-        for tensor in description_tensors:
-            
-            # Foward
-            output = model(image_tensor, tensor)
-
-            # Compute loss
-            loss = criterion(output, tensor)
-
-            # Update loss
-            current_loss += loss.item()
-
-    final_loss = current_loss / len(dev_set)
-    return final_loss
-
-def train(model: nn.Module, 
-        train_set: list, 
-        dev_set: list, 
-        image_id_to_image: dict,
-        image_id_to_description: dict,
-        vocab
-    ):
+def train(model: nn.Module, train_set: DataLoader):
     # Initialize some variables
     plot_train_loss = []
-    plot_dev_loss = []
-    plot_dev_bleu = []
     time_stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
     # Loss & Optimizer
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     criterion = nn.NLLLoss()
-
-    # Early Stopping
-    early_stop = EarlyStopping(patience=3, verbose=True)
 
     # Training
     for epoch in range(EPOCHS):
@@ -104,35 +62,19 @@ def train(model: nn.Module,
         model.train(True)   
 
         # Train per iteration
-        train_average_loss = train_per_iter(train_set, image_id_to_image, image_id_to_description, model, optimizer, criterion)
+        train_average_loss = train_per_iter(train_set, model, optimizer, criterion)
 
         # Turn off gradient tracking cause it is not needed anymore
         model.train(False)
 
-        # Calculate Loss on dev set
-        dev_average_loss = dev_per_iter(dev_set, image_id_to_image, image_id_to_description, model, criterion)
-
-        # Calculate bleu on dev set
-        dev_bleu = model_bleu_score(dev_set, image_id_to_image, image_id_to_description, model, vocab)
-
-        # Save loss, bleu
+        # Save loss
         plot_train_loss.append(train_average_loss)
-        plot_dev_loss.append(dev_average_loss)
-        plot_dev_bleu.append(dev_bleu)
 
         # Print information
         if epoch % PRINT_EVERY == 0:
             if os.path.isdir(f'model/snapshot/{time_stamp}') is False:
                 os.makedirs(f'model/snapshot/{time_stamp}')
             torch.save(model.state_dict(), f'model/snapshot/{time_stamp}/snap_shot_{epoch}.pt')
-            print(f"- Loss       | Train: {train_average_loss:.4f} - Dev: {dev_average_loss:.4f}")
-            print(f"- Bleu       | Dev: {dev_bleu:.4f}")
-        
-        # Check if validation loss is decreasing
-        if early_stop(dev_average_loss):
-            print('Early stopping at epoch', epoch)
-            break
+            print(f"- Loss: {train_average_loss:.4f}")
 
     torch.save(plot_train_loss, f'graphs/data/train_loss')
-    torch.save(plot_dev_loss, f'graphs/data/dev_loss')
-    torch.save(plot_dev_bleu, f'graphs/data/dev_bleu')

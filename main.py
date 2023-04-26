@@ -3,7 +3,7 @@ from preprocess.preprocess import handling_token, text_preprocessing, image_proc
 from constants import *
 from model.model import Model
 from train.train import train
-from utils.utils import plot_bleu, plot_loss
+from utils.utils import plot_loss
 import os
 
 parser = argparse.ArgumentParser(description="This is just a description")
