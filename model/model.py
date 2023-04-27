@@ -43,7 +43,7 @@ class Model(nn.Module):
             if target is None:
                 decoder_input = output.argmax(2)
             else:
-                decoder_input = teacher_forcing(output, target[i])
+                decoder_input = teacher_forcing(output, target[:, i])
             ## Save output for compute loss
             outputs[i] = output.squeeze()
 
