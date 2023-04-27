@@ -4,6 +4,7 @@ from hyperparameters import *
 from constants import *
 from model.components.encoder import Encoder
 from model.components.decoder import Decoder
+from train.teacher_forcing import teacher_forcing
 
 class Model(nn.Module):
     def __init__(self, vocab_size):
@@ -39,7 +40,10 @@ class Model(nn.Module):
             ## Forward through Decoder
             output, decoder_hidden, decoder_cell = self.decoder(decoder_input, decoder_hidden, decoder_cell)
             ## Get next input
-            decoder_input = output.argmax(2)
+            if target is None:
+                decoder_input = output.argmax(2)
+            else:
+                decoder_input = teacher_forcing(output, target[i])
             ## Save output for compute loss
             outputs[i] = output.squeeze()
 
