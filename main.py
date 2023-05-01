@@ -5,7 +5,7 @@ from hyperparameters import *
 from model.model import Model
 from train.train import train
 import os
-from evaluation.evaluate import evaluate
+from evaluation.evaluate import evaluate, evaluate_beam_seach
 
 parser = argparse.ArgumentParser(description="This is just a description")
 parser.add_argument('-m', '--model', action='store', help="model's name", required=False)
@@ -19,22 +19,22 @@ if args.data:
     print("> Processing Data...\n")
 
     # Create dictionary mapping from image_id to list of descriptions
-    print("> Creating vocab...")
-    image_id_to_descriptions, vocab = handling_token(
-        dir="Flickr8k.token.txt",
-    )
+    # print("> Creating vocab...")
+    # image_id_to_descriptions, vocab = handling_token(
+    #     dir="Flickr8k.token.txt",
+    # )
 
-    print("> Vocab size: ", vocab.__len__())
-    if os.path.isdir('preprocess/preprocessed/') is False:
-        os.makedirs('preprocess/preprocessed/')
-    torch.save(vocab, 'preprocess/preprocessed/vocab.pt')
+    # print("> Vocab size: ", vocab.__len__())
+    # if os.path.isdir('preprocess/preprocessed/') is False:
+    #     os.makedirs('preprocess/preprocessed/')
+    # torch.save(vocab, 'preprocess/preprocessed/vocab.pt')
 
-    # Preprocess image_id_to_descriptions's descriptions. Text Preprocessing
-    print("> Text Preprocessing...")
-    text_preprocessing(
-        dict=image_id_to_descriptions,
-        vocab=vocab
-    )
+    # # Preprocess image_id_to_descriptions's descriptions. Text Preprocessing
+    # print("> Text Preprocessing...")
+    # text_preprocessing(
+    #     dict=image_id_to_descriptions,
+    #     vocab=vocab
+    # )
     # print(image_id_to_descriptions['1000268201_693b08cb0e']) DEBUG
     
     print("> Image Preprocessing...")
