@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torchtext.vocab import Vocab
 from nltk.translate.bleu_score import sentence_bleu
 from tqdm import tqdm
-from evaluation.beam_seach import BeamSearch
+from evaluation.beam_search import BeamSearch
 
 def evaluate(model: nn.Module, val_set: DataLoader, vocab: Vocab):
     # Initialize some variables
