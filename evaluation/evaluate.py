@@ -31,10 +31,10 @@ def evaluate(model: nn.Module, val_set: DataLoader, vocab: Vocab):
         for j in range(output.shape[0]):
             translated_output = vocab.lookup_tokens(output[j].cpu().numpy())
             translated_target = [vocab.lookup_tokens(description_tensor[j].cpu().numpy())]
-            bleu_per_tensor = sentence_bleu(translated_target, translated_output, weights=(1.0, 0, 0, 0))
+            bleu_per_tensor = sentence_bleu(translated_target, translated_output, weights=(0.25, 0.25, 0.25, 0.25))
             bleu_per_batch += bleu_per_tensor
 
         bleu_per_batch = bleu_per_batch / BATCH_SIZE
         bleu_per_epoch += bleu_per_batch
 
-    print("> BLEU-1: ", bleu_per_epoch)
+    print("> BLEU-4: ", bleu_per_epoch)
