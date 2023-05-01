@@ -109,7 +109,7 @@ if args.translate:
     model.load_state_dict(state_dict)
 
     # Load the image from the provided link
-    url = input("Enter image link: ")
+    url = input("> Enter image link: ")
     image = process_image(urlopen(url)).unsqueeze(0).to(DEVICE)
 
     # Put the tensor through the model and get the predicted caption
