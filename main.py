@@ -89,7 +89,7 @@ if args.evaluate:
     model = Model(vocab.__len__()).to(DEVICE)
 
     print("> Load pre-trained model...")
-    state_dict = torch.load("model/snapshot/snap_shot_29.pt", map_location=torch.device(DEVICE))
+    state_dict = torch.load("model/snapshot/20230508_082303/snap_shot_1.pt", map_location=torch.device(DEVICE))
     model.load_state_dict(state_dict)
 
     evaluate(model, val_set, vocab)

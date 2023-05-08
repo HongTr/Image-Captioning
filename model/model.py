@@ -13,7 +13,8 @@ class Model(nn.Module):
 
         self.encoder = Encoder()
         self.decoder = Decoder(vocab_size)
-
+        self.attention = nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE)
+        self.softmax = nn.Softmax(dim = 1)
     def forward(self, input, target=None):
         # Get target length
         if target == None:
@@ -28,7 +29,12 @@ class Model(nn.Module):
 
         # Encoder
         embedding_vector = self.encoder(input)
-
+        # Attention
+        '''The softmax is used to create the probability distributions for the feature embedding. 
+        Multiplying these probabilities with the original feature embedding will produce the new embedding layer that we will feed to the decoder.'''
+        attention_output = self.softmax(self.attention(embedding_vector))
+        embedding_vector = embedding_vector * attention_output
+        
         # Bridge
         decoder_input = torch.full((batch_size, 1), 2, device=DEVICE)
         decoder_hidden = embedding_vector.unsqueeze(0)
